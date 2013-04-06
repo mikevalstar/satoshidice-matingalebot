@@ -5,11 +5,12 @@ require_once('./lib/functions.php');
 
 
 define('MIN_BET', 0.01);                                // Minimum Bet
-define('MAX_BET', 2.56);                                // Maximum Bet
+define('MAX_BET', 0.10);                                // Maximum Bet
 define('ADDRESS', '1dice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp'); // Satoshi-Dice Adress to Bet on
-define('MAX_GAMES', 250);                               // Stop after 250 Won Games
-define('RPC_USER', 'fredyy');                           //
-define('RPC_PASS', 'asd123');
+define('MULTIPLIER', 2.0);				// multiplier to up bets at
+define('MAX_GAMES', 10);                               // Stop after 250 Won Games
+define('RPC_USER', 'mikevalstar');                           //
+define('RPC_PASS', 'password');
 
 $b = new jsonRPCClient('http://'.RPC_USER.':'.RPC_PASS.'@127.0.0.1:8332/');
 
@@ -48,7 +49,7 @@ while (($bet <= MAX_BET) && ($count_won < MAX_GAMES))
     }
 	try // Wrapped in a try catch block just incase we run out of cash.
     {
-        $b->sendtoaddress(ADDRESS, (float) $bet);
+        $transaction_id = $b->sendtoaddress(ADDRESS, (float) $bet);
 	}
     catch(Exception $e)
     {
@@ -64,7 +65,7 @@ while (($bet <= MAX_BET) && ($count_won < MAX_GAMES))
     $total_fees = number_format($total_fees,8,'.','')+0;
 
     echo 'Game #'.$count." (W:{$count_won}|L:".(($count-1)-$count_won)."|Q:".(($count > 1)?f(($count_won/($count-1))*100,2):0)."%|TW:".f($balance_c - $starting_balance).")\n";
-    echo 'Balance: ' . str_pad(f($balance_a), 15) . 'Bet: '. str_pad($bet, 10) . 'Fee: '. str_pad(f($fee),10) . 'Total Fees: '. $total_fees. "\n";
+    echo 'Balance: ' . str_pad(f($balance_a), 15) . 'Bet: '. str_pad($bet, 10) . 'Fee: '. str_pad(f($fee),10) . 'Total Fees: '. str_pad($total_fees, 10). "TransactionID: " . $transaction_id . "\n";
     echo 'Balance: ' . str_pad(f($balance_b), 15) . 'Waiting';
 
     $balance_c = 0;
@@ -98,7 +99,7 @@ while (($bet <= MAX_BET) && ($count_won < MAX_GAMES))
     else
     {
             $log->lwrite('Bet : '.$bet.' LOSE');
-            $bet *= 2;
+            $bet *= MULTIPLIER;
             echo "Lose!" . "\n";
     }
 
