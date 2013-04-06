@@ -81,6 +81,13 @@ while (($bet <= MAX_BET) && ($count_won < MAX_GAMES))
 
     $diff = $balance_c - $balance_b;
 
+    $lookupurl = "http://satoshidice.com/lookup.php?tx=".$transaction_id."&limit=100&min_bet=0&status=ALL&format=json";
+    $data = json_decode(file_get_contents($lookupurl));
+    if(isset($data->bets[0])){
+        $bet = $data->bets[0];
+        echo "Bet: ". str_pad($bet->betname, 20)." Result: ". str_pad($bet->result, 15)." Lucky: ". str_pad($bet->lucky, 8)." \n";
+    }
+
     if ($diff > $bet)
     {
             $log->lwrite('Bet : '.$bet.' WON: '.$diff);
