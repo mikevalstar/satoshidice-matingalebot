@@ -42,8 +42,7 @@ while (($bet <= MAX_BET) && ($count_won < MAX_GAMES))
         $log->lwrite('Wating for confimation: C: ' . f($conf) . ' | UC: ' . f($balance_a-$conf));
         while($b->getbalance('*', 1) < $bet)
         {
-            echo ".";
-            sleep(60); // Wait a full minute before checking the balance again.
+            sleep(1); // Wait a full minute before checking the balance again.
         }
         echo "\n";
     }
@@ -64,7 +63,7 @@ while (($bet <= MAX_BET) && ($count_won < MAX_GAMES))
     $total_fees += $fee;
     $total_fees = number_format($total_fees,8,'.','')+0;
 
-    echo 'Game #'.$count." (W:{$count_won}|L:".(($count-1)-$count_won)."|Q:".(($count > 1)?f(($count_won/($count-1))*100,2):0)."%|TW:".f($balance_c - $starting_balance).")\n";
+    echo 'Game #'.$count." (W:{$count_won}|L:".(($count-1)-$count_won)."|Q:".(($count > 1)?f(($count_won/($count-1))*100,2):0)."%|TW:".f($balance_c - $starting_balance).") | ".date('D M j H:i:s T  Y', time())."\n";
     echo 'Balance: ' . str_pad(f($balance_a), 15) . 'Bet: '. str_pad($bet, 10) . 'Fee: '. str_pad(f($fee),10) . 'Total Fees: '. str_pad($total_fees, 10). "TransactionID: " . $transaction_id . "\n";
     echo 'Balance: ' . str_pad(f($balance_b), 15) . 'Waiting';
 
@@ -72,9 +71,8 @@ while (($bet <= MAX_BET) && ($count_won < MAX_GAMES))
 
     while ($balance_b >= $balance_c)
     {
-        sleep(3);
+        sleep(1);
 		$balance_c = $b -> getbalance('*', 0);
-		echo '.';
     }
 
     echo "\nBalance: " . str_pad(f($balance_c), 15);
@@ -82,10 +80,10 @@ while (($bet <= MAX_BET) && ($count_won < MAX_GAMES))
     $diff = $balance_c - $balance_b;
 
     $lookupurl = "http://satoshidice.com/lookup.php?tx=".$transaction_id."&limit=100&min_bet=0&status=ALL&format=json";
-    $data = json_decode(file_get_contents($lookupurl));
+    $data = json_decode(@file_get_contents($lookupurl));
     if(isset($data->bets[0])){
-        $bet = $data->bets[0];
-        echo "Bet: ". str_pad($bet->betname, 20)." Result: ". str_pad($bet->result, 15)." Lucky: ". str_pad($bet->lucky, 8)." \n";
+        $bets = $data->bets[0];
+        echo "Bet: ". str_pad($bets->betname, 24)." Result: ". str_pad($bets->result, 13)." Lucky: ". str_pad($bets->lucky, 10)." Payment: ".str_pad($bets->payment_amt, 10) ." \n";
     }
 
     if ($diff > $bet)
