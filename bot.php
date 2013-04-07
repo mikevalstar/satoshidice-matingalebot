@@ -70,7 +70,7 @@ while (($bet <= MAX_BET) && ($count_won < MAX_GAMES))
     $total_fees += $fee;
     $total_fees = number_format($total_fees,8,'.','')+0;
 
-    echo 'Game #'.$count." (W:{$count_won}|L:".(($count-1)-$count_won)."|Q:".(($count > 1)?f(($count_won/($count-1))*100,2):0)."%|TW:".f($balance_c - $starting_balance).") | ".date('D M j H:i:s T  Y', time())."\n";
+    echo 'Bet #'.$count." (W:{$count_won}|L:".(($count-1)-$count_won)."|Q:".(($count > 1)?f(($count_won/($count-1))*100,2):0)."%|TW:".f($balance_c - $starting_balance).") | ".date('D M j H:i:s T  Y', time())."\n";
     echo 'Balance: ' . str_pad(f($balance_a), 15) . 'Bet: '. str_pad($bet, 10) . 'Fee: '. str_pad(f($fee),10) . 'Total Fees: '. str_pad($total_fees, 10). "TransactionID: " . $transaction_id . "\n";
     echo 'Balance: ' . str_pad(f($balance_b), 15) . 'Waiting';
 
