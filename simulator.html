@@ -11,22 +11,22 @@ $(function(){
     $('#run').click(function(){
         $.get('http://www.random.org/integers/?num='+$('#simcount').val()+'&min=0&max=65535&col=1&base=10&format=plain&rnd=new', function(data){
             var nums = data.split("\n");
-            var lossnumber = $('#losenum').val();
+            var lossnumber = parseFloat($('#losenum').val());
             
             var wins = 0;
             var losses = 0;
             var cata_losses = 0;
             var money = 0;
             
-            var min_bet = $('#minbet').val();
-            var max_bet = $('#maxbet').val();
-            var multi = $('#multi').val();
-            var payout = $('#payout').val() - 1;
+            var min_bet = parseFloat($('#minbet').val());
+            var max_bet = parseFloat($('#maxbet').val());
+            var multi = parseFloat($('#multi').val());
+            var payout = parseFloat($('#payout').val()) - 1;
             var current_bet = min_bet;
             
             console.log('starting sim');
             for (var i=0; i < nums.length - 1; i++){
-                if(nums[i] < lossnumber){
+                if(parseFloat(nums[i]) < lossnumber){
                     // win
                     wins++;
                     money += current_bet * payout;
@@ -60,9 +60,9 @@ $(function(){
 <body>
 
 <label>Min Bet: <input type="text" id="minbet" value="0.01" /></label><br/>
-<label>Max Bet: <input type="text" id="maxbet" value="1.00" /></label><br/>
-<label>Multiplier: <input type="text" id="multi" value="2" /></label><br/>
-<label>Payout Multiplier: <input type="text" id="payout" value="2.000" /></label><br/>
+<label>Max Bet: <input type="text" id="maxbet" value="5.12" /></label><br/>
+<label>Bet Multiplier: <input type="text" id="multi" value="2" /></label><br/>
+<label>Payout Multiplier: <input type="text" id="payout" value="2.004" /></label><br/>
 <label>Lose Number (or higher): <input type="text" id="losenum" value="32000" /></label><br/>
 <label>Simulation Count: <input type="text" id="simcount" value="100" /> (max 10,000 for random.org)</label><br/>
 <button id="run">Run</button>
