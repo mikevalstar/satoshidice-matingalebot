@@ -9,50 +9,65 @@
 // http://www.random.org/integers/?num=100&min=0&max=65000&col=1&base=10&format=plain&rnd=new
 $(function(){
     $('#run').click(function(){
-        $.get('http://www.random.org/integers/?num='+$('#simcount').val()+'&min=0&max=65535&col=1&base=10&format=plain&rnd=new', function(data){
-            var nums = data.split("\n");
-            var lossnumber = parseFloat($('#losenum').val());
-            
-            var wins = 0;
-            var losses = 0;
-            var cata_losses = 0;
-            var money = 0;
-            
-            var min_bet = parseFloat($('#minbet').val());
-            var max_bet = parseFloat($('#maxbet').val());
-            var multi = parseFloat($('#multi').val());
-            var payout = parseFloat($('#payout').val()) - 1;
-            var current_bet = min_bet;
-            
-            console.log('starting sim');
-            for (var i=0; i < nums.length - 1; i++){
-                if(parseFloat(nums[i]) < lossnumber){
-                    // win
-                    wins++;
-                    money += current_bet * payout;
-                    
-                    current_bet = min_bet;
-                }else{
-                    // loss
-                    losses++;
-                    money -= current_bet * 1;
-                    
-                    current_bet *= multi;
-                    
-                    if(current_bet > max_bet){
-                        cata_losses++;
-                        current_bet = max_bet;
-                    }
+        if($('#randomorg:checked').length > 0){
+            $.get('http://www.random.org/integers/?num='+$('#simcount').val()+'&min=0&max=65535&col=1&base=10&format=plain&rnd=new', function(data){
+                var nums = data.split("\n");
+                runcalc(nums);
+            });
+        }else{
+            var nums = new Array();
+            for (var i=0; i <= parseInt($('#simcount').val()); i++){
+                nums[i] = Math.floor(Math.random() * 65536);
+            }
+            runcalc(nums);
+        }
+    });
+    
+    function runcalc(nums){
+        var lossnumber = parseFloat($('#losenum').val());
+                
+        var wins = 0;
+        var losses = 0;
+        var cata_losses = 0;
+        var money = 0;
+        
+        var min_bet = parseFloat($('#minbet').val());
+        var max_bet = parseFloat($('#maxbet').val());
+        var multi = parseFloat($('#multi').val());
+        var payout = parseFloat($('#payout').val()) - 1;
+        var resetmax = ($('#resetmax:checked').length > 0);
+        var current_bet = min_bet;
+        
+        console.log('starting sim');
+        for (var i=0; i < nums.length - 1; i++){
+            if(parseFloat(nums[i]) < lossnumber){
+                // win
+                wins++;
+                money += current_bet * payout;
+                
+                current_bet = min_bet;
+            }else{
+                // loss
+                losses++;
+                money -= current_bet * 1;
+                
+                current_bet *= multi;
+                
+                if(current_bet > max_bet){
+                    cata_losses++;
+                    current_bet = max_bet;
+                    if(resetmax)
+                        current_bet = min_bet;
                 }
             }
-            console.log('ended sim', i, wins, losses, money);
-            
-            $('#simout').html(i);
-            $('#winout').html(wins);
-            $('#lossout').html(losses + "(" + cata_losses + ")");
-            $('#profits').html(money);
-        });
-    });
+        }
+        console.log('ended sim', i, wins, losses, money);
+        
+        $('#simout').html(i);
+        $('#winout').html(wins);
+        $('#lossout').html(losses + "(" + cata_losses + ")");
+        $('#profits').html(money);
+    }
 });
 </script>
     
@@ -65,6 +80,8 @@ $(function(){
 <label>Payout Multiplier: <input type="text" id="payout" value="2.004" /></label><br/>
 <label>Lose Number (or higher): <input type="text" id="losenum" value="32000" /></label><br/>
 <label>Simulation Count: <input type="text" id="simcount" value="100" /> (max 10,000 for random.org)</label><br/>
+<label>Use Random.org: <input type="checkbox" id="randomorg" value="1" /></label><br/>
+<label>Reset on Max Loss: <input type="checkbox" id="resetmax" value="1" /></label><br/>
 <button id="run">Run</button>
 
 <table>
