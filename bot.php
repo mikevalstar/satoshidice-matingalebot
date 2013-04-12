@@ -4,7 +4,6 @@ require_once('./lib/jsonRPCClient.php');
 require_once('./lib/Logging.php');
 require_once('./lib/functions.php');
 
-
 define('MIN_BET', 0.01);                                // Minimum Bet
 define('MAX_BET', 0.10);                                // Maximum Bet
 define('TX_FEE', 0.0005);                                // Transaction fee to use
@@ -111,7 +110,7 @@ while (($bet <= MAX_BET) && ($count_won < MAX_GAMES))
     else
     {
             $log->lwrite('Bet : '.$bet.' LOSE');
-            $bet *= MULTIPLIER;
+            $bet = round(($bet * MULTIPLIER), 8);
             echo "Lose!" . "\n";
     }
 
